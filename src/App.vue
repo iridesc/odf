@@ -17,7 +17,7 @@
             <h4>密码</h4>
             <b-input v-model="password" type="password"></b-input>
             <br />
-            <b-button @click="login" variant="success">login</b-button>
+            <b-button pill size="sm" class="shadow" @click="login" variant="success">login</b-button>
           </b-col>
           <b-col> </b-col>
         </b-row>

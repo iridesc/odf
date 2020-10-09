@@ -3,7 +3,7 @@
   <div>
     <h4 class="textCenter">
       你好,{{ role }}，{{ username }}！
-      <b-badge size="sm" variant="success" @click="logout"> 登出 </b-badge>
+      <b-badge size="sm" class="shadow" pill variant="success" @click="logout"> 登出 </b-badge>
     </h4>
     <!-- 角色功能区 -->
     <div v-if="role == 'boss'" class="textCenter speaceX"></div>
@@ -11,7 +11,6 @@
       <b-button
         size="sm"
       class="shadow"
-
         pill
         variant="primary "
         v-clipboard:copy="getAllReadyOrdersText"
@@ -81,7 +80,7 @@
           <b-input v-model="orderInfo"></b-input>
         </b-card>
         <br />
-        <b-button @click="addOrder" size="sm" pill variant="primary "
+        <b-button @click="addOrder" size="sm" pill variant="primary "  class="shadow"
           >提交订单</b-button
         >
       </b-card>
@@ -146,7 +145,7 @@
       <!-- 收货信息 -->
       <template v-slot:cell(info)="row">
         <p
-          v-clipboard:copy="row.item.info"
+          v-clipboard:copy="row.item.info+'\n'+row.item.product"
           v-clipboard:success="onCopy"
           v-clipboard:error="onError"
         >
@@ -163,12 +162,12 @@
           >
             {{ row.item.expnum }}
           </span>
-          <b-button size="sm" @click="rowEdit(row)" pill variant="primary ">
+          <b-button size="sm"  class="shadow" @click="rowEdit(row)" pill variant="primary ">
             {{ row.detailsShowing ? "取消" : "修改" }}
           </b-button>
         </div>
 
-        <b-button size="sm" pill variant="danger" v-else> 待发货 </b-button>
+        <b-button size="sm" pill   class="shadow" variant="danger"  @click="rowEdit(row)" v-else> 待发!货 </b-button>
       </template>
     </b-table>
   </div>
@@ -194,7 +193,7 @@ export default {
             order.info +
             "\n" +
             order.product;
-          console.log(s);
+          // console.log(s);
         }
       });
       return s;
@@ -219,11 +218,11 @@ export default {
         this.orderInfo = item.info;
         this.nowexpnum = item.expnum;
 
-        console.log(this.selectedsize);
-        console.log(this.selectedmass);
-        console.log(this.selectedpackaging);
-        console.log(this.orderInfo);
-        console.log(this.nowexpnum);
+        // console.log(this.selectedsize);
+        // console.log(this.selectedmass);
+        // console.log(this.selectedpackaging);
+        // console.log(this.orderInfo);
+        // console.log(this.nowexpnum);
       }
       row.toggleDetails();
     },
@@ -255,22 +254,22 @@ export default {
             this.orders = data.orders;
             this.orders = [];
             data.orders.forEach((order) => {
-              let date = new Date(order.addtime * 1000);
-              order.addtime = date.toLocaleString("zh-CN", { hour12: false });
+              let date = new Date(order.addtime * 1000)
+              order.addtime = date.toLocaleString("zh", { hour12: false })+' '+order.saler;
               order._rowVariant = "info";
               this.orders.push(order);
-              let product_d = Number(
-                order.product.split("-")[1].split("斤")[0]
-              );
+              // let product_d = Number(
+              //   order.product.split("-")[1].split("斤")[0]
+              // );
 
-              if (!isNaN(product_d)) {
-                this.totalmass = this.totalmass + product_d;
-                console.log(this.totalmass);
-              } else {
-                this.makeToast("Error!", "某项数据有误！！！！", "danger");
-              }
+              // if (!isNaN(product_d)) {
+              //   this.totalmass = this.totalmass + product_d;
+              //   // console.log(this.totalmass);
+              // } else {
+              //   this.makeToast("Error!", "某项数据有误！！！！", "danger");
+              // }
 
-              console.log(this.totalmass);
+              // // console.log(this.totalmass);
             });
           }
         });
@@ -289,10 +288,13 @@ export default {
         )
         .then((response) => {
           let data = response.data;
-          console.log(data);
+          // console.log(data);
           if (data.suc) {
             this.makeToast("Success!", "添加成功！", "success");
             this.getOrders();
+
+
+
           } else {
             this.makeToast(
               "Error!",
@@ -313,7 +315,7 @@ export default {
       };
       this.axios.post("/api/", JSON.stringify(senddata)).then((response) => {
         let data = response.data;
-        console.log(data);
+        // console.log(data);
         if (data.suc) {
           this.makeToast("Success!", "保存成功！", "success");
           this.getOrders();
@@ -354,11 +356,7 @@ export default {
           sortable: true,
           variant: "primary",
         },
-        {
-          key: "saler",
-          sortable: true,
-          variant: "primary",
-        },
+   
         {
           key: "info",
           sortable: true,
